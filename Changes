@@ -2,6 +2,9 @@ Release history for Crypt::ARIA
 
 {{ $NEXT }}
 
+0.003     2013-11-26 22:13:46 Asia/Seoul
+          Fix POD.
+
 0.002     2013-11-26 15:16:44 Asia/Seoul
           Fix POD. Fix testing Crypt::CBC
 
