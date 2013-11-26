@@ -228,7 +228,7 @@ __END__
   # simple ECB mode
   my $cipher    = $aria->encrypt_ecb( $plain );
   my $decrypted = $aria->decrypt_ecb( $cipher );
-  # note that $decrypt may not same as $plain, because it is appended
+  # note that $decrypt may not be same as $plain, because it is appended
   # null bytes to.
 
 
@@ -241,7 +241,7 @@ __END__
         -padding => 'none';
     );
   my $cipher = $cbc->encrypt( $plain );
-  my $plain  = $cbc->default( $cipher );
+  my $plain  = $cbc->decrypt( $cipher );
 
 
 =head1 DESCRIPTION
