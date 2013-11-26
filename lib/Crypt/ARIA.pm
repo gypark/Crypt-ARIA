@@ -84,6 +84,8 @@ sub set_key {
 
     ( $self->{enc_round}, $self->{enc_roundkey} ) = _setup_enc_key( $self->{key}, $self->{keybits} );
     ( $self->{dec_round}, $self->{dec_roundkey} ) = _setup_dec_key( $self->{key}, $self->{keybits} );
+
+    return $self;
 }
 
 sub set_key_hexstring {
@@ -224,8 +226,8 @@ __END__
   
   # multi block encryption/decryption
   # simple ECB mode
-  my $cipher  = $aria->encrypt_ecb( $plain );
-  my $decrypt = $aria->decrypt_ecb( $cipher );
+  my $cipher    = $aria->encrypt_ecb( $plain );
+  my $decrypted = $aria->decrypt_ecb( $cipher );
   # note that $decrypt may not same as $plain, because it is appended
   # null bytes to.
 
@@ -244,11 +246,117 @@ __END__
 
 =head1 DESCRIPTION
 
-blah blah blah
+Crypt::ARIA provides an interface between Perl and ARIA implementation
+in C.
 
-=head1 EXPORT
+ARIA is a block cipher algorithm designed in South Korea.
+For more information about ARIA, visit links in L</SEE ALSO> section.
 
-None by default.
+The C portion of this module is made by researchers of ARIA and is
+available from the ARIA website. I had asked them and they've made sure
+that the code is free to use.
+
+=head1 METHODS
+
+=over
+
+=item new
+
+C<new()> method creates an object.
+
+  my $aria = Crypt::ARIA->new();
+
+You can give a master key as argument. The master key in ARIA should be of 16, 24, or 32 bytes.
+
+  my $key = pack 'H*', '00112233445566778899aabbccddeeff';
+  my $aria = Crypt::ARIA->new( $key );
+
+=item set_key
+
+C<set_key()> sets a master key. This method returns the object itself.
+
+  $aria->set_key( pack 'H*', '00112233445566778899aabbccddeeff' );
+
+=item set_key_hexstring
+
+C<set_key_hexstring()> sets a master key. You can give a hexstring as
+argument. The hexstring can include whitespaces.
+This method returns the object itself.
+
+  $aria->set_key_hexstring( '00 11 22 33 44 55 66 77 88 99 aa bb cc dd ee ff' );
+
+=item unset_key
+
+This method removes the master key from object and return the object itsetf.
+
+  $aria->unset_key();
+
+=item has_key
+
+This method returns true if a master key is set, false otherwise.
+
+=item encrypt
+
+C<encrypt()> encrypts a block of plaintext.
+
+  my $cipher = $aria->encrypt( $plain );
+
+$plain should be of exactly 16 bytes.
+It returns a ciphertext of 16 bytes.
+If you want to encrypt a text of different length,
+you have to choose the operation mode and the padding method.
+You may implement them by yourself or use another module for them.
+
+C<Crypt::ARIA> is designed to be compatible with L<Crypt::CBC>.
+Therefore, you can use C<Crypt::CBC> to use CBC mode with several
+padding methods.
+
+  use Crypt::CBC;
+  my $cbc = Crypt::CBC->new(
+        -cipher => Crypt::ARIA->new()->set_key( $key ),
+        -iv     => $initial_vector,
+        -header => 'none';
+        -padding => 'none';
+    );
+  my $cipher = $cbc->encrypt( $plain );
+  my $plain  = $cbc->default( $cipher );
+
+=item decrypt
+
+C<decrypt()> decrypts a block of ciphertext.
+
+  my $plain  = $aria->decrypt( $cipher );
+
+$cipher should be of exactly 16 bytes.
+Again, you have to use another module to decrypt multi-block
+message.
+
+=item encrypt_ecb
+
+This method encrypts a plaintext of arbitrary length.
+
+  my $cipher  = $aria->encrypt_ecb( $plain );
+
+It returns the ciphertext whose length is multiple of 16 bytes.
+
+NOTE: If the length of $plain is not n-times of 16 exactly,
+C<encrypt_ecb()> appends null bytes to fill it. If the length
+is n-times of 16 exactly, $plain would be untouched. This means
+you should have to deliver the original length of $plain to the
+receiver. You had better use other module like L<Crypt::CBC> that
+provides advanced operation mode and padding method.
+This method is just for test purpose.
+
+=item decrypt_ecb
+
+This method decrypts a multi-block ciphertext.
+
+  my $decrypted = $aria->decrypt_ecb( $cipher );
+
+As described in L</encrypt_ecb>, $decrypted may contain a sequence
+of null bytes in its end. You should remove them yourself.
+
+=back
 
 =head1 SEE ALSO
 

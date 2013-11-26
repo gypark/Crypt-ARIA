@@ -23,6 +23,9 @@
  *
  * Substantial portion of the code originally written by Jin Hong.
  *
+ * 26, November 2013
+ * included in this module under permission.
+ *
  */
 
 /* 사용 플랫폼의 endian 특성에 따라 ARIA_LITTLE_ENDIAN 혹은
@@ -535,11 +538,3 @@ encrypted ciphertext.\n");
     printf("Okay.  The result is correct.\n");
   printf("END   testing the roundtrip.\n");
 }
-
-/*
-int main(int argc, char **argv) {
-  ARIA_test();
-  return 0;
-}
-// */
-
