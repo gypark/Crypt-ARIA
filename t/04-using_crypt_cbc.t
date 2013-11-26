@@ -11,7 +11,10 @@ use Crypt::ARIA;
 
 #########################
 
-use Crypt::CBC;
+SKIP: {
+	eval { require Crypt::CBC };
+
+	skip "Crypt::CBC not installed", 8 if $@;
 
 # CBC
 {
@@ -215,6 +218,10 @@ END
 	my $decrypt = $cbc->decrypt( $cipher_pack );
 
 	cmp_ok( $decrypt, 'eq', $plain, 'encrypt and recover long string' );
+}
+
+
+
 }
 
 

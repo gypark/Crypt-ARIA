@@ -319,7 +319,7 @@ padding methods.
         -padding => 'none';
     );
   my $cipher = $cbc->encrypt( $plain );
-  my $plain  = $cbc->default( $cipher );
+  my $plain  = $cbc->decrypt( $cipher );
 
 =item decrypt
 
