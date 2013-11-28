@@ -12,9 +12,9 @@ use Crypt::ARIA;
 #########################
 
 SKIP: {
-	eval { require Crypt::CBC };
+	eval { require Crypt::CBC; Crypt::CBC->VERSION(2.31); 1 };
 
-	skip "Crypt::CBC not installed", 8 if $@;
+	skip "Crypt::CBC >= 2.31 not installed", 8 if $@;
 
 # CBC
 {
